@@ -1,0 +1,5 @@
+Received: User registered: [3]
+Received: User registered: [{"id":4,"username":"sanjayk","email":"aw1@gmaiil.com","password":"sha1$6da13ad1$1$baa9cc6a53bdac4aac93ab848debca37f6439794","role":"USER"}]
+Received: User registered: [{"id":9,"username":"sdssanjayk","email":"sa@gmaiil.com","password":"sha1$3fc4670e$1$7d00f94ecde5ffc40bf02cf1a874e6a5913390c9","role":"USER"}]
+Received: User registered: {"username":"fsdfsd","email":"sfsda@gmaiil.com"}
+Received: User registered: {"username":"fsdfsd11","email":"sanjay1111@gmaiil.com"}
