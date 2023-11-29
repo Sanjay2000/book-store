@@ -33,8 +33,8 @@ This Node.js API project provides user registration, authentication, and game da
 * Installation
 * Clone the repository:
 
-        git clone https://github.com/yourusername/your-api-project.git
-        cd your-api-project
+        git clone https://bitbucket.org/backenddev404/tfg_task.git
+        cd tfg_task
 ### Install dependencies:
             npm install
 ### Configuration
