@@ -37,6 +37,9 @@ This Node.js API project provides user registration, authentication, and game da
         cd tfg_task
 ### Install dependencies:
             npm install
+
+### Run the migration for creating table 
+         knex migrate:latest
 ### Configuration
 Create a .env file in the project root and configure the following environment variables:
 
