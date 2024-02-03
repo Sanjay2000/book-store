@@ -1,77 +1,60 @@
+# Book Store Application - Backend
 
-## Node.js API for User Registration, Authentication, and Game Data with RabbitMQ Event Processing
-This Node.js API project provides user registration, authentication, and game data management using Express, MySQL, MongoDB, and RabbitMQ for event processing.
+This repository contains the backend implementation for a Book Store Application. The application focuses on user management, book management, purchase history, and revenue tracking for authors.
 
-#### Table of Contents
-* Features
-* Prerequisites
-* Getting Started
-* Installation
-* Configuration
-* Database Setup
-* RabbitMQ Setup
-### Usage
-* User Registration and Authentication
-* Game Data API
-* RabbitMQ Event Processing
-* User registration with securely hashed passwords.
-* JWT-based authentication.
-* MongoDB for game data storage.
-* CRUD operations for game data.
-* RabbitMQ event processing for user registration events.
-* Error handling and request validation.
-* Separation of routes, controllers, and services.
-### Prerequisites
-##### Before you begin, ensure you have met the following requirements:
+## Logic for Computing sellCount
 
-* Node.js and npm installed.
-* MySQL database server.
-* MongoDB server.
-* RabbitMQ server
+The `sellCount` is computed dynamically based on the purchase history. Whenever a user makes a purchase, the `sellCount` for the corresponding book is incremented by the quantity purchased. This logic ensures an accurate count of the number of copies sold for each book.
 
-### Getting Started
-* Installation
-* Clone the repository:
+## Mechanism for Sending Email Notifications
 
-        git clone https://bitbucket.org/backenddev404/tfg_task.git
-        cd tfg_task
-### Install dependencies:
-            npm install
+The application utilizes the Node.js `nodemailer` library for sending email notifications. Two types of email notifications are implemented:
 
-### Run the migration for creating table 
-         knex migrate:latest
-### Configuration
-Create a .env file in the project root and configure the following environment variables:
+1. **Purchase Confirmation Email to Users:**
+   - Sent to users after a successful purchase.
+   - Includes details such as the purchased book title, quantity, and total price.
 
-# MySQL database configuration
-     DB_HOST=your_mysql_host
-     DB_PORT=your_mysql_port
-     DB_USER=your_mysql_username
-     DB_PASSWORD=your_mysql_password
-     DB_NAME=your_mysql_database
+2. **Revenue Notification Email to Authors:**
+   - Sent to authors whenever one of their books is purchased.
+   - Includes details like the purchase date, book title, quantity sold, and total revenue generated.
 
-# MongoDB configuration
-    MONGO_URI=your_mongodb_connection_uri
+Email notifications are sent asynchronously using background jobs or message queues to avoid blocking the main application thread. This ensures a responsive user experience even during email processing.
 
-# RabbitMQ configuration
-    RABBITMQ_URL=your_rabbitmq_connection_url
-    
-# JWT configuration
-     JWT_KEY=secret_key
-# Database Setup
-### Create a MySQL database.
-### RabbitMQ Setup
-* Ensure RabbitMQ is installed and running.
-* Configure RabbitMQ with the appropriate settings in your .env file.
-# Usage
-* User Registration and Authentication
-* Register a user by making a POST request to /api/v1/user/register.
-* Authenticate a user by making a POST request to /api/v1/user/login to receive a JWT token.
-* Game Data API
-* Create, retrieve, update, and delete game data using the relevant API endpoints.
-* RabbitMQ Event Processing
-* The RabbitMQ event publisher sends a message whenever a user registers.
-* The event subscriber listens for events and logs them in a file.
+## Database Design and Implementation Choices
 
-#  Happy Coding  ):
+### User Management:
+
+- User authentication and authorization are implemented using JWT (JSON Web Tokens).
+- Different roles are assigned to users (Author, Admin, Retail User) for varying levels of access.
+
+### Book Management:
+
+- MongoDB is used as the database, and Mongoose is used as the ODM (Object-Document Mapper).
+- The `Book` model includes a `sellCount` field, computed dynamically based on the purchase history.
+
+### Purchase History:
+
+- Purchase records are stored in the database using the `PurchaseHistory` model.
+- Unique purchase IDs follow the format {{YEAR}}-{{MONTH}}-{{numeric increment id}}.
+- Proper synchronization is implemented to handle race conditions during purchase creation.
+
+### Revenue Tracking:
+
+- Authors' revenue is tracked by summing the prices of their books sold.
+- Email notifications are sent to authors with revenue details (current month, current year, total revenue).
+
+### Additional Features:
+
+- Search and filtering options for books based on title and price.
+- Secure payment processing for book purchases.
+- Email notifications for new book releases, with a limit of 100 emails per minute to handle rate conditions.
+
+## Usage
+
+To run the application locally, follow these steps:
+
+1. Clone the repository: `git clone https://github.com/your-username/book-store-backend.git`
+2. Install dependencies: `npm install`
+3. Set up environment variables (e.g., MongoDB URI, email service credentials).
+4. Start the server: `npm start`
 

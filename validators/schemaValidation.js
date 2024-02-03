@@ -9,20 +9,24 @@ const registerSchema = Joi.object({
     email: Joi.string().email().lowercase().required(),
     password: Joi.string().required(),
     username: Joi.string().min(4).required(),
-    password: Joi.string(),
-    role:Joi.string().optional()
+    role: Joi.string().required()
 
 
 });
 
-const addGameDataSchema = Joi.object({
-    gameId: Joi.number().required(),
-    score: Joi.number().required(),
+const bookSchema = Joi.object({
+    sellCount: Joi.number(),
+    title: Joi.string().required(),
+    description: Joi.string(),
+    price: Joi.number().required(),
+    authors:Joi.array().required(),
+
 });
+
 
 
 module.exports = {
     registerSchema,
     loginSchema,
-    addGameDataSchema
+    bookSchema
 };

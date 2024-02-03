@@ -1,7 +1,5 @@
-const User = require("../models/gameDataTable.js");
-const jwt = require("jsonwebtoken");
+const User = require("../models/user.js");
 require("dotenv").config();
-const knex = require("../db_connections/sql_db.js");
 const { verifyToken } = require("../helper/services.js");
 module.exports = {
   authUser: async (req, res, next) => {
@@ -11,18 +9,40 @@ module.exports = {
       );
     }
     let token = req.get("Authorization").replace("Bearer ", "");
-    console.log(token, "token");
     try {
       const decoded = await verifyToken(token);
 
-      let user = await knex("users")
-        .where("email", decoded.email)
-        .andWhere("role", "USER");
+      let user = await User.findOne({ email: decoded.email })
 
       if (user.length == 0) {
         return res.json(helper.showUnathorizedErrorResponse("Not authorized"));
       }
-      req.user = user[0];
+      req.user = decoded;
+
+      next();
+    } catch (error) {
+      const resdata = helper.showUnathorizedErrorResponse("Invalid token");
+      resdata.isInvalidToken = true;
+      res.json(resdata);
+    }
+  },
+  authAdmin: async (req, res, next) => {
+    if (!req.get("Authorization")) {
+      return res.json(
+        helper.showErrorResponse("Authorization token is required")
+      );
+    }
+    let token = req.get("Authorization").replace("Bearer ", "");
+
+    try {
+      const decoded = await verifyToken(token);
+
+      let user = await User.find({ email: decoded.email, role: { $in: ['Author', 'Admin'] } })
+
+      if (user.length == 0) {
+        return res.json(helper.showUnathorizedErrorResponse("Not authorized"));
+      }
+      req.user = decoded;
 
       next();
     } catch (error) {

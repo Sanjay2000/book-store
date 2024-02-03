@@ -4,6 +4,9 @@ module.exports = function (app) {
   const user = require("./user");
   app.use("/api/v1/user", user);
 
-  const gameData = require("./game_data");
-  app.use("/api/v1/game/data", gameData);
+  const book = require("./book");
+  app.use("/api/v1/book", book);
+
+  const purchaseHistory = require("./purchaseHistory");
+  app.use("/api/v1/book", purchaseHistory);
 };

@@ -4,21 +4,21 @@ const {
   createJwtToken,
 } = require("../helper/services");
 require("dotenv").config();
-const knex = require("../db_connections/sql_db");
-const { publishUserRegistrationEvent } = require("../helper/event_notifiy");
+
+const userModel = require('../models/user')
 
 module.exports = {
   register: async (req, res) => {
     try {
       let data = req.body;
 
-      let userEmailCheck = await knex("users").where("email", data.email);
+      let userEmailCheck = await userModel.find({ email: data.email });
       if (userEmailCheck.length > 0) {
         return res.json(
           helper.showValidationErrorResponse("Email already exist!")
         );
       }
-      let userNameCheck = await knex("users").where("username", data.username);
+      let userNameCheck = await userModel.find({ username: data.username });
       if (userNameCheck.length > 0) {
         return res.json(
           helper.showValidationErrorResponse("Username already exist!")
@@ -26,20 +26,11 @@ module.exports = {
       }
       // haspassword
       data.password = await passwordHash(data.password);
-
-      knex("users")
-        .insert(data)
+      userModel.create(data)
         .then(async (resdata) => {
-          let userdata = await knex("users").where("id", resdata[0]);
-          const user = {
-            username: userdata[0].username,
-            email: userdata[0].email,
-          };
-          publishUserRegistrationEvent(user);
-          return res.json(helper.createResponse("User registerd", userdata));
+          return res.json(helper.createResponse("User registerd", resdata));
         })
         .catch((err) => {
-          console.log(err, "err");
           return res.json(
             helper.showDatabaseErrorResponse("Internal db error")
           );
@@ -56,7 +47,7 @@ module.exports = {
       let data = req.body;
 
       //user check
-      let userCheck = await knex("users").where("email", data.email);
+      let userCheck = await userModel.find({ email: data.email });
       if (userCheck.length == 0) {
         return res.json(helper.showValidationErrorResponse("User not exist"));
       }
@@ -70,10 +61,9 @@ module.exports = {
         return res.json(helper.showValidationErrorResponse("Invalid password"));
       }
 
-      knex("users")
-        .where("email", data.email)
+      userModel.findOne({ email: data.email })
         .then(async (resdata) => {
-          resdata = resdata[0];
+          resdata = resdata;
           resdata.auth_token = await createJwtToken(resdata);
           return res.json(helper.showSuccessResponse("User login", resdata));
         })
