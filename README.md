@@ -53,7 +53,7 @@ Email notifications are sent asynchronously using background jobs or message que
 
 To run the application locally, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/book-store-backend.git`
+1. Clone the repository: `git clone https://github.com/Sanjay2000/book-store.git`
 2. Install dependencies: `npm install`
 3. Set up environment variables (e.g., MongoDB URI, email service credentials).
 4. Start the server: `npm start`
